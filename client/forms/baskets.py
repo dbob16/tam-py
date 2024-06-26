@@ -1,5 +1,5 @@
 import ttkbootstrap as ttk 
-import time
+from ttkbootstrap.constants import *
 from ..models import BasketTable
 
 def basket_form(prefix:str="regular", bootstyle:str="primary"):
@@ -21,7 +21,10 @@ def basket_form(prefix:str="regular", bootstyle:str="primary"):
         results = basket_table.select_range(v_from.get(), v_to.get())
         for i in range(v_from.get(), v_to.get()+1):
             d = results[i]
-            tv_results.insert("", "end", iid=i, values=(i, d[0], d[1]))
+            if i % 2 != 0:
+                tv_results.insert("", "end", iid=i, values=(i, d[0], d[1]), tags=("oddrow",))
+            elif i % 2 == 0:
+                tv_results.insert("", "end", iid=i, values=(i, d[0], d[1]), tags=("evenrow",))
         if v_id.get() > v_to.get():
             v_id.set(v_to.get())
         elif v_id.get() < v_from.get():
@@ -30,6 +33,7 @@ def basket_form(prefix:str="regular", bootstyle:str="primary"):
         txt_bd.focus()
 
     def cmd_save(_=None):
+        print(f"Saving: {v_id.get()}: {v_bd.get()} {v_do.get()}")
         if tv_results.item(v_id.get())["values"] != [v_id.get(), v_bd.get(), v_do.get()]:
             basket_table.insert(v_id.get(), v_bd.get(), v_do.get())
         cmd_update()
@@ -67,11 +71,11 @@ def basket_form(prefix:str="regular", bootstyle:str="primary"):
         cmd_paste()
         cmd_save()
 
-    def cmd_next_page():
+    def cmd_next_page(_=None):
         v_from.set(v_from.get()+v_per_page.get()), v_to.set(v_to.get()+v_per_page.get())
         cmd_update()
 
-    def cmd_prev_page():
+    def cmd_prev_page(_=None):
         v_from.set(v_from.get()-v_per_page.get()), v_to.set(v_to.get()-v_per_page.get())
         cmd_update()
 
@@ -113,11 +117,13 @@ def basket_form(prefix:str="regular", bootstyle:str="primary"):
     txt_per_page = ttk.Entry(frm_range_select, textvariable=v_per_page, width=4)
     txt_per_page.pack(side="left", padx=4, pady=4)
 
-    btn_next_page = ttk.Button(frm_range_select, text="Next Page", bootstyle=bootstyle, command=cmd_next_page)
+    btn_next_page = ttk.Button(frm_range_select, text="Next Page - Alt N", bootstyle=bootstyle, command=cmd_next_page)
     btn_next_page.pack(side="left", padx=4, pady=4)
+    window.bind("<Alt-n>", cmd_next_page)
 
-    btn_prev_page = ttk.Button(frm_range_select, text="Previous Page", bootstyle=bootstyle, command=cmd_prev_page)
+    btn_prev_page = ttk.Button(frm_range_select, text="Previous Page - Alt B", bootstyle=bootstyle, command=cmd_prev_page)
     btn_prev_page.pack(side="left", padx=4, pady=4)
+    window.bind("<Alt-b>", cmd_prev_page)
 
     # Current Record controls
     lbl_id = ttk.Label(frm_current_record, text="Basket #")
@@ -172,11 +178,13 @@ def basket_form(prefix:str="regular", bootstyle:str="primary"):
     tv_sb.pack(side="right", fill="y")
 
     tv_results = ttk.Treeview(frm_results, show="headings", columns=("id", "bd", "do"), yscrollcommand=tv_sb.set, height=30)
-    tv_results.heading("id", text="Basket #")
-    tv_results.heading("bd", text="Basket Description")
-    tv_results.heading("do", text="Basket Donors")
+    tv_results.heading("id", text="Basket #", anchor=W)
+    tv_results.heading("bd", text="Basket Description", anchor=W)
+    tv_results.heading("do", text="Basket Donors", anchor=W)
     tv_results.pack(padx=4, pady=4, fill="both")
     tv_results.bind("<<TreeviewSelect>>", cmd_tv_select)
+    tv_results.tag_configure('oddrow', background="#000000")
+    tv_results.tag_configure('evenrow', background="#151515")
 
     tv_sb.configure(command=tv_results.yview)
 

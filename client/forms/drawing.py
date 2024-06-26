@@ -1,5 +1,6 @@
 import ttkbootstrap as ttk 
 import time
+from ttkbootstrap.constants import *
 from ..models import BasketTable, ReportByName
 
 def drawing_form(prefix:str="regular", bootstyle:str="primary"):
@@ -24,7 +25,10 @@ def drawing_form(prefix:str="regular", bootstyle:str="primary"):
         for i in range(v_from.get(), v_to.get()+1):
             d = results[i]
             n = names[i]
-            tv_results.insert("", "end", iid=i, values=(i, d[2], n))
+            if i % 2 != 0:
+                tv_results.insert("", "end", iid=i, values=(i, d[2], n), tags=('oddrow',))
+            elif i % 2 == 0:
+                tv_results.insert("", "end", iid=i, values=(i, d[2], n), tags=('evenrow',))
         if v_id.get() > v_to.get():
             v_id.set(v_to.get())
         elif v_id.get() < v_from.get():
@@ -170,11 +174,13 @@ def drawing_form(prefix:str="regular", bootstyle:str="primary"):
     tv_sb.pack(side="right", fill="y")
 
     tv_results = ttk.Treeview(frm_results, show="headings", columns=("id", "bw", "wi"), yscrollcommand=tv_sb.set, height=30)
-    tv_results.heading("id", text="Basket #")
-    tv_results.heading("bw", text="Winning Ticket")
-    tv_results.heading("wi", text="Winner Information")
+    tv_results.heading("id", text="Basket #", anchor=W)
+    tv_results.heading("bw", text="Winning Ticket", anchor=W)
+    tv_results.heading("wi", text="Winner Information", anchor=W)
     tv_results.pack(padx=4, pady=4, fill="both")
     tv_results.bind("<<TreeviewSelect>>", cmd_tv_select)
+    tv_results.tag_configure('oddrow', background="#000000")
+    tv_results.tag_configure('evenrow', background="#151515")
 
     tv_sb.configure(command=tv_results.yview)
 

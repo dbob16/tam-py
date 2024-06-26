@@ -85,7 +85,7 @@ class BasketTable():
         conn, cur = session_maker()
         try:
             sql_str = f"""INSERT INTO `{self.tablename}` (basket_id, basket_desc, basket_donor) 
-            VALUES ({basket_id}, \"{basket_desc})\", \"{basket_donor}\")"""
+            VALUES ({basket_id}, \"{basket_desc}\", \"{basket_donor}\")"""
             cur.execute(sql_str)
             conn.commit()
         except:
@@ -232,6 +232,10 @@ class ReportByBasket():
     def select_filtered(self, filter:str):
         conn, cur = session_maker()
         select_str = f"SELECT * FROM `{self.reportname}` WHERE {filter}"
+        cur.execute(select_str)
+        results = cur.fetchall()
+        conn.close()
+        return results
     def drop(self):
         conn, cur = session_maker()
         drop_str = f"DROP VIEW `{self.reportname}`"
