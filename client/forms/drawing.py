@@ -1,7 +1,7 @@
 import ttkbootstrap as ttk 
 import time
 from ttkbootstrap.constants import *
-from ..models import BasketTable, ReportByName
+from ..models import BasketTable, TicketTable, ReportByName
 
 def drawing_form(prefix:str="regular", bootstyle:str="primary"):
     basket_table = BasketTable(prefix)
@@ -56,7 +56,7 @@ def drawing_form(prefix:str="regular", bootstyle:str="primary"):
 
     def cmd_copy(_=None):
         copied_record.clear()
-        for c in (v_bw):
+        for c in (v_bw,):
             copied_record.append(c.get())
 
     def cmd_paste(_=None):
@@ -75,13 +75,17 @@ def drawing_form(prefix:str="regular", bootstyle:str="primary"):
         cmd_paste()
         cmd_save()
 
-    def cmd_next_page():
+    def cmd_next_page(_=None):
         v_from.set(v_from.get()+v_per_page.get()), v_to.set(v_to.get()+v_per_page.get())
         cmd_update()
 
-    def cmd_prev_page():
+    def cmd_prev_page(_=None):
         v_from.set(v_from.get()-v_per_page.get()), v_to.set(v_to.get()-v_per_page.get())
         cmd_update()
+
+    def cmd_random(_=None):
+        result = TicketTable(prefix).select_random()
+        v_bw.set(result)
 
     # Frames
     frm_range_select = ttk.LabelFrame(window, text="Range Select")
@@ -121,11 +125,13 @@ def drawing_form(prefix:str="regular", bootstyle:str="primary"):
     txt_per_page = ttk.Entry(frm_range_select, textvariable=v_per_page, width=4)
     txt_per_page.pack(side="left", padx=4, pady=4)
 
-    btn_next_page = ttk.Button(frm_range_select, text="Next Page", bootstyle=bootstyle, command=cmd_next_page)
+    btn_next_page = ttk.Button(frm_range_select, text="Next Page - Alt N", bootstyle=bootstyle, command=cmd_next_page)
     btn_next_page.pack(side="left", padx=4, pady=4)
+    window.bind("<Alt-n>", cmd_next_page)
 
-    btn_prev_page = ttk.Button(frm_range_select, text="Previous Page", bootstyle=bootstyle, command=cmd_prev_page)
+    btn_prev_page = ttk.Button(frm_range_select, text="Previous Page - Alt B", bootstyle=bootstyle, command=cmd_prev_page)
     btn_prev_page.pack(side="left", padx=4, pady=4)
+    window.bind("<Alt-b>", cmd_prev_page)
 
     # Current Record controls
     lbl_id = ttk.Label(frm_current_record, text="Basket #")
@@ -143,6 +149,7 @@ def drawing_form(prefix:str="regular", bootstyle:str="primary"):
     btn_save = ttk.Button(frm_current_record, text="Save - Alt S", bootstyle=bootstyle, command=cmd_save)
     btn_save.grid(row=0, column=3, padx=4, pady=4, rowspan=2, sticky="ns")
     window.bind("<Alt-s>", cmd_save)
+    window.bind("<Alt-r>", cmd_random)
 
     # Command controls
     btn_move_up = ttk.Button(frm_commands, text="Move Up - Alt O", bootstyle=bootstyle, command=cmd_move_up)

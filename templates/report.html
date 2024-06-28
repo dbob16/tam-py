@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ title }}</title>
+</head>
+<style>
+* {
+padding: 0;
+margin: 0;
+}
+
+thead strong {
+padding: 2px;
+font-size: 14pt;
+}
+
+td {
+border: solid black 1px;
+padding: 3px;
+font-size: 11pt;
+}
+
+th {
+text-align: left;
+padding: 3px;
+}
+</style>
+<body>
+<table>
+<thead>
+<tr>
+<th colspan="0">
+<h1>{{ title }}</h1>
+</th>
+</tr>
+<tr>
+<th colspan="0">
+<strong>{{ subtitle }}</strong>
+</th>
+</tr>
+<tr>
+{% for heading in headings -%}
+<th>
+{{ heading }}
+</th>
+{% endfor -%}
+</tr>
+</thead>
+{% for row in rows -%}
+<tr>
+{% for column in row -%}
+<td>
+{{ column }}
+</td>
+{% endfor -%}
+</tr>
+{% endfor -%}
+</table>
+</body>
+</html>

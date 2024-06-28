@@ -1,6 +1,11 @@
 import ttkbootstrap as ttk 
 from ttkbootstrap.constants import *
+import random
 from ..models import TicketTable
+try:
+    import names
+except:
+    pass
 
 def ticket_form(prefix:str="regular", bootstyle:str="primary"):
     ticket_table = TicketTable(prefix)
@@ -42,6 +47,7 @@ def ticket_form(prefix:str="regular", bootstyle:str="primary"):
         if v_id.get() > v_from.get():
             v_id.set(v_id.get()-1)
             tv_results.selection_set(v_id.get())
+        window.update()
     
     def cmd_move_down(_=None):
         cmd_save()
@@ -77,6 +83,17 @@ def ticket_form(prefix:str="regular", bootstyle:str="primary"):
     def cmd_prev_page(_=None):
         v_from.set(v_from.get()-v_per_page.get()), v_to.set(v_to.get()-v_per_page.get())
         cmd_update()
+
+    def cmd_random(_=None):
+        def d0():
+            return random.randint(0, 1)
+        def d():
+            return random.randint(0, 9)
+        pref_list = ["TEXT", "CALL"]
+        fname, lname = names.get_first_name(), names.get_last_name()
+        pnum = f"{d0()}{d()}{d()}-{d()}{d()}{d()}-{d()}{d()}{d()}{d()}"
+        pref = random.choice(pref_list)
+        v_fn.set(fname), v_ln.set(lname), v_pn.set(pnum), v_pr.set(pref)
 
     # Frames
     frm_range_select = ttk.LabelFrame(window, text="Range Select")
@@ -158,6 +175,7 @@ def ticket_form(prefix:str="regular", bootstyle:str="primary"):
     btn_save = ttk.Button(frm_current_record, text="Save - Alt S", bootstyle=bootstyle, command=cmd_save)
     btn_save.grid(row=0, column=5, padx=4, pady=4, rowspan=2, sticky="ns")
     window.bind("<Alt-s>", cmd_save)
+    window.bind("<Alt-r>", cmd_random)
 
     # Command controls
     btn_move_up = ttk.Button(frm_commands, text="Move Up - Alt O", bootstyle=bootstyle, command=cmd_move_up)

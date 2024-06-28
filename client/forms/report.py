@@ -1,19 +1,24 @@
 import ttkbootstrap as ttk 
+import webbrowser
 from ttkbootstrap.constants import *
+from jinja2 import FileSystemLoader, Environment, select_autoescape
 from ..models import ReportByBasket, ReportByName
 
 def report_form(prefix:str, bootstyle:str, mode:str):
     if mode == "name":
         title = f"{prefix.capitalize()} Winners by Name"
-        headings = ("Winner", "Preference", "Ticket #", "Basket #", "Basket Description", "Basket Donors")
+        headings = ("Winner Info", "Preference", "Ticket #", "Basket #", "Description", "Donors")
         report = ReportByName(prefix)
     elif mode == "basket":
         title = f"{prefix.capitalize()} Winners by Basket #"
-        headings = ("Basket #", "Basket Description", "Basket Donor", "Ticket #", "Winner", "Preference")
+        headings = ("Basket #", "Description", "Donor", "Ticket #", "Winner Info", "Preference")
         report = ReportByBasket(prefix)
     
     window = ttk.Toplevel(title=title)
     v_title = ttk.StringVar(window)
+
+    env = Environment(loader=FileSystemLoader("templates"), autoescape=select_autoescape())
+    template = env.get_template("report.html")
 
     # Commands
     def cmd_update_all():
@@ -51,6 +56,16 @@ def report_form(prefix:str, bootstyle:str, mode:str):
                 tv_results.insert("", "end", iid=index, values=r, tags=('evenrow',))
             index += 1
         v_title.set("Winners Preferring CALL")
+
+    def cmd_save_open():
+        results = []
+        for c in tv_results.get_children():
+            values = tuple(tv_results.item(c)["values"])
+            results.append(values)
+        out_file = template.render(title=title, subtitle=v_title.get(), headings=headings, rows=results)
+        with open("output.html", "w") as f:
+            f.write(out_file)
+        webbrowser.open("output.html")
 
     # Frames
     frm_filters = ttk.LabelFrame(window, text="Filters")
@@ -92,7 +107,7 @@ def report_form(prefix:str, bootstyle:str, mode:str):
     tv_results.tag_configure('evenrow', background="#151515")
 
     # Save Options controls
-    btn_save_open = ttk.Button(frm_save_options, text="Save and Open", bootstyle=bootstyle)
+    btn_save_open = ttk.Button(frm_save_options, text="Save and Open", bootstyle=bootstyle, command=cmd_save_open)
     btn_save_open.pack(side="left", padx=4, pady=4)
 
     # On open commands

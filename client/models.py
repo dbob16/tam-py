@@ -60,6 +60,13 @@ class TicketTable():
             result_set[r[0]] = [r[1], r[2], r[3], r[4]]
         conn.close()
         return result_set
+    def select_random(self):
+        conn, cur = session_maker()
+        sql_str = f"SELECT ticket_id FROM `{self.tablename}` ORDER BY RAND() LIMIT 1"
+        cur.execute(sql_str)
+        result = cur.fetchone()
+        conn.close()
+        return result[0]
     def drop(self):
         conn, cur = session_maker()
         drop_str = f"DROP TABLE `{self.tablename}`"
