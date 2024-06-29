@@ -29,7 +29,6 @@ class TicketTable():
             WHERE ticket_id={ticket_id}"""
             cur.execute(sql_str)
             conn.commit()
-        print(f"Inserted/Updated record on {ticket_id}")
         conn.close()
     def select(self, ticket_id:int):
         conn, cur = session_maker()
