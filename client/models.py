@@ -36,9 +36,12 @@ class TicketTable():
             cur.execute(f"SELECT * FROM {self.tablename} WHERE ticket_id={ticket_id}")
             result = cur.fetchone()
             conn.close()
-            return result
+            if result:
+                return result
+            else:
+                return (ticket_id, "", "", "")
         except:
-            return "No record found"
+            return (ticket_id, "", "", "", "")
     def select_range(self, start_num:int, end_num:int):
         conn, cur = session_maker()
         result_set = {}
@@ -175,6 +178,15 @@ class ReportByName():
         cur.execute(create_str)
         conn.commit()
         conn.close()
+    def select(self, basket_id:int):
+        conn, cur = session_maker()
+        select_str = f"SELECT * FROM `{self.reportname}` WHERE basket_id = {basket_id}"
+        cur.execute(select_str)
+        result = cur.fetchone()
+        if result:
+            return result
+        else:
+            return ("",)
     def select_range(self, start_num:int, end_num:int):
         conn, cur = session_maker()
         record_set = {}

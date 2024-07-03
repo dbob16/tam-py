@@ -40,7 +40,7 @@ def drawing_form(prefix:str="regular", bootstyle:str="primary"):
         v = tv_results.item(v_id.get())["values"]
         if [v[0], v[1]] != [v_id.get(), v_bw.get()]:
             basket_table.insert_winner(v_id.get(), v_bw.get())
-        cmd_update()
+            tv_results.item(v_id.get(), values=[v_id.get(), v_bw.get(), report.select(v_id.get())[0]])
 
     def cmd_move_up(_=None):
         cmd_save()
@@ -145,6 +145,8 @@ def drawing_form(prefix:str="regular", bootstyle:str="primary"):
 
     txt_bw = ttk.Entry(frm_current_record, textvariable=v_bw, width=20)
     txt_bw.grid(row=1, column=1, padx=4, pady=4)
+    txt_bw.bind("<Return>", cmd_save)
+
 
     btn_save = ttk.Button(frm_current_record, text="Save - Alt S", bootstyle=bootstyle, command=cmd_save)
     btn_save.grid(row=0, column=3, padx=4, pady=4, rowspan=2, sticky="ns")

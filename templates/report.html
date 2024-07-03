@@ -11,36 +11,58 @@ padding: 0;
 margin: 0;
 }
 
-thead strong {
-padding: 2px;
-font-size: 14pt;
-}
-
 td {
-border: solid black 1px;
-padding: 3px;
+padding: 1px;
 font-size: 11pt;
 }
 
 th {
 text-align: left;
-padding: 3px;
+padding: 1px;
+padding-right: 12px;
+font-size: 11pt;
+}
+
+table.report-container {
+    page-break-after: always;
+}
+
+thead.report-header {
+    display: table-header-group;
+}
+
+tfoot.report-footer {
+    display: table-footer-group;
+    td {
+        font-size: 8px;
+    }
+}
+
+tbody.report-body td {
+    border: solid #111111 1px;
+    padding-right: 10px;
+}
+
+@media print {
+    @page {
+        margin: 0.25in 0.5in 0.25in 0.5in;
+    }
 }
 </style>
+<script type="text/js">
+window.location = {{ subtitle }}
+</script>
 <body>
-<table>
-<thead>
+<main>
+<table class="report-container">
+<thead class="report-header">
 <tr>
-<th colspan="0">
+<th colspan="90">
 <h1>{{ title }}</h1>
+<h2>{{ subtitle }}</h2>
 </th>
 </tr>
-<tr>
-<th colspan="0">
-<strong>{{ subtitle }}</strong>
-</th>
-</tr>
-<tr>
+<tr class="table-header">
 {% for heading in headings -%}
 <th>
 {{ heading }}
@@ -48,6 +70,7 @@ padding: 3px;
 {% endfor -%}
 </tr>
 </thead>
+<tbody class="report-body">
 {% for row in rows -%}
 <tr>
 {% for column in row -%}
@@ -57,6 +80,15 @@ padding: 3px;
 {% endfor -%}
 </tr>
 {% endfor -%}
+</tbody>
+<tfoot class="report-footer">
+<tr>
+<td colspan="90">
+Ticket Auction Manager by Dilan Gilluly
+</td>
+</tr>
+</tfoot>
 </table>
+</main>
 </body>
 </html>

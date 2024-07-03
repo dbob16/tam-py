@@ -33,10 +33,9 @@ def basket_form(prefix:str="regular", bootstyle:str="primary"):
         txt_bd.focus()
 
     def cmd_save(_=None):
-        print(f"Saving: {v_id.get()}: {v_bd.get()} {v_do.get()}")
         if tv_results.item(v_id.get())["values"] != [v_id.get(), v_bd.get(), v_do.get()]:
             basket_table.insert(v_id.get(), v_bd.get(), v_do.get())
-        cmd_update()
+            tv_results.item(v_id.get(), values=[v_id.get(), v_bd.get(), v_do.get()])
 
     def cmd_move_up(_=None):
         cmd_save()
@@ -137,12 +136,14 @@ def basket_form(prefix:str="regular", bootstyle:str="primary"):
 
     txt_bd = ttk.Entry(frm_current_record, textvariable=v_bd, width=20)
     txt_bd.grid(row=1, column=1, padx=4, pady=4)
+    txt_bd.bind("<Return>", cmd_save)
 
     lbl_do = ttk.Label(frm_current_record, text="Basket Donors")
     lbl_do.grid(row=0, column=2, padx=4, pady=4)
 
     txt_do = ttk.Entry(frm_current_record, textvariable=v_do, width=20)
     txt_do.grid(row=1, column=2, padx=4, pady=4)
+    txt_do.bind("<Return>", cmd_save)
 
     btn_save = ttk.Button(frm_current_record, text="Save - Alt S", bootstyle=bootstyle, command=cmd_save)
     btn_save.grid(row=0, column=3, padx=4, pady=4, rowspan=2, sticky="ns")

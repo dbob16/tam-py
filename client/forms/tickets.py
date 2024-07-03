@@ -40,7 +40,7 @@ def ticket_form(prefix:str="regular", bootstyle:str="primary"):
     def cmd_save(_=None):
         if tv_results.item(v_id.get())["values"] != [v_id.get(), v_fn.get(), v_ln.get(), v_pn.get(), v_pr.get()]:
             ticket_table.insert(v_id.get(), v_fn.get(), v_ln.get(), v_pn.get(), v_pr.get())
-        cmd_update()
+            tv_results.item(v_id.get(), values=[v_id.get(), v_fn.get(), v_ln.get(), v_pn.get(), v_pr.get()])
 
     def cmd_move_up(_=None):
         cmd_save()
@@ -153,24 +153,28 @@ def ticket_form(prefix:str="regular", bootstyle:str="primary"):
 
     txt_fn = ttk.Entry(frm_current_record, textvariable=v_fn, width=20)
     txt_fn.grid(row=1, column=1, padx=4, pady=4)
+    txt_fn.bind("<Return>", cmd_save)
 
     lbl_ln = ttk.Label(frm_current_record, text="Last Name")
     lbl_ln.grid(row=0, column=2, padx=4, pady=4)
 
     txt_ln = ttk.Entry(frm_current_record, textvariable=v_ln, width=20)
     txt_ln.grid(row=1, column=2, padx=4, pady=4)
+    txt_ln.bind("<Return>", cmd_save)
 
     lbl_pn = ttk.Label(frm_current_record, text="Phone Number")
     lbl_pn.grid(row=0, column=3, padx=4, pady=4)
 
     txt_pn = ttk.Entry(frm_current_record, textvariable=v_pn, width=20)
     txt_pn.grid(row=1, column=3, padx=4, pady=4)
+    txt_pn.bind("<Return>", cmd_save)
 
     lbl_pr = ttk.Label(frm_current_record, text="Preference")
     lbl_pr.grid(row=0, column=4, padx=4, pady=4)
 
     chk_pr = ttk.Checkbutton(frm_current_record, textvariable=v_pr, variable=v_pr, onvalue="TEXT", offvalue="CALL", width=5, bootstyle=f"{bootstyle}-outline-toolbutton")
     chk_pr.grid(row=1, column=4, padx=4, pady=4)
+    chk_pr.bind("<Return>", cmd_save)
 
     btn_save = ttk.Button(frm_current_record, text="Save - Alt S", bootstyle=bootstyle, command=cmd_save)
     btn_save.grid(row=0, column=5, padx=4, pady=4, rowspan=2, sticky="ns")
