@@ -7,6 +7,7 @@ def session_writer():
     window = ttk.Toplevel(title="Write DB Configuration")
 
     # Variables
+    v_explainer = ttk.StringVar(window)
     v_host, v_port = ttk.StringVar(window), ttk.IntVar(window)
     v_user, v_pwd = ttk.StringVar(window), ttk.StringVar(window)
     v_db, v_ssl = ttk.StringVar(window), ttk.BooleanVar(window)
@@ -28,12 +29,34 @@ def session_writer():
             window.destroy()
         except:
             print("Unable to save db file.")
+    
+    def cmd_read():
+        try:
+            config = ConfigParser()
+            config.read("config.ini")
+            dbconfig = config["db"]
+            v_host.set(dbconfig["host"])
+            v_port.set(dbconfig["port"])
+            v_user.set(dbconfig["user"])
+            v_pwd.set(dbconfig["password"])
+            v_db.set(dbconfig["database"])
+            v_ssl.set(dbconfig["ssl"])
+
+            conn, cur = session_maker()
+            cur.execute("SHOW TABLES")
+
+            v_explainer.set("Config good, no need to change.")
+            lbl_explainer.configure(bootstyle="success")
+        except:
+            v_port.set(3306)
+            v_explainer.set("Config is not good, please check settings below.")
+            lbl_explainer.configure(bootstyle="danger")
 
     def cmd_close():
         window.destroy()
 
     # Frames
-    lbl_explainer = ttk.Label(window, text="DB config not found or invalid. Please correct below.", bootstyle="danger")
+    lbl_explainer = ttk.Label(window, textvariable=v_explainer)
     lbl_explainer.pack(padx=4, pady=4)
 
     frm_credentials = ttk.Frame(window)
@@ -86,6 +109,8 @@ def session_writer():
     btn_cancel = ttk.Button(frm_buttons, text="Cancel", bootstyle="secondary", command=cmd_close)
     btn_cancel.grid(row=0, column=1, padx=4, pady=4)
 
+    cmd_read()
+
 def session_maker():
     config = ConfigParser()
     try:
@@ -101,9 +126,10 @@ def session_maker():
         }
         try:
             conn = mariadb.connect(**conndict)
+            cur = conn.cursor()
+            return conn, cur
         except Exception as e:
             print(e)
-        cur = conn.cursor()
-        return conn, cur
+            return "error", "No valid db conn"
     except Exception as e:
         print(e)
