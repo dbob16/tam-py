@@ -11,7 +11,7 @@ def ticket_form(prefix:str="regular", bootstyle:str="primary"):
     ticket_table = TicketTable(prefix)
 
     window = ttk.Toplevel(title=f"{prefix.capitalize()} Tickets")
-    v_from, v_to, v_per_page = ttk.IntVar(window), ttk.IntVar(window), ttk.IntVar(window)
+    v_from, v_to = ttk.IntVar(window), ttk.IntVar(window)
     v_id, v_fn, v_ln, v_pn, v_pr = ttk.IntVar(window), ttk.StringVar(window), ttk.StringVar(window), ttk.StringVar(window), ttk.StringVar(window)
     copied_record = []
 
@@ -48,12 +48,14 @@ def ticket_form(prefix:str="regular", bootstyle:str="primary"):
             v_id.set(v_id.get()-1)
             tv_results.selection_set(v_id.get())
         window.update()
+        txt_fn.focus()
     
     def cmd_move_down(_=None):
         cmd_save()
         if v_id.get() < v_to.get():
             v_id.set(v_id.get()+1)
             tv_results.selection_set(v_id.get())
+        txt_fn.focus()
 
     def cmd_copy(_=None):
         copied_record.clear()
@@ -77,11 +79,13 @@ def ticket_form(prefix:str="regular", bootstyle:str="primary"):
         cmd_save()
 
     def cmd_next_page(_=None):
-        v_from.set(v_from.get()+v_per_page.get()), v_to.set(v_to.get()+v_per_page.get())
+        diff = v_to.get() - v_from.get() + 1
+        v_from.set(v_from.get()+diff), v_to.set(v_to.get()+diff)
         cmd_update()
 
     def cmd_prev_page(_=None):
-        v_from.set(v_from.get()-v_per_page.get()), v_to.set(v_to.get()-v_per_page.get())
+        diff = v_to.get() - v_from.get() + 1
+        v_from.set(v_from.get()-diff), v_to.set(v_to.get()-diff)
         cmd_update()
 
     def cmd_random(_=None):
@@ -127,11 +131,8 @@ def ticket_form(prefix:str="regular", bootstyle:str="primary"):
     lbl_spacer = ttk.Label(frm_range_select, text="    ")
     lbl_spacer.pack(side="left", padx=4, pady=4)
 
-    lbl_per_page = ttk.Label(frm_range_select, text="Per Page: ")
-    lbl_per_page.pack(side="left", padx=4, pady=4)
-
-    txt_per_page = ttk.Entry(frm_range_select, textvariable=v_per_page, width=4)
-    txt_per_page.pack(side="left", padx=4, pady=4)
+    lbl_pages = ttk.Label(frm_range_select, text="Pages: ")
+    lbl_pages.pack(side="left", padx=4, pady=4)
 
     btn_next_page = ttk.Button(frm_range_select, text="Next Page - Alt N", bootstyle=bootstyle, command=cmd_next_page)
     btn_next_page.pack(side="left", padx=4, pady=4)
@@ -222,5 +223,3 @@ def ticket_form(prefix:str="regular", bootstyle:str="primary"):
     tv_results.tag_configure('evenrow', background="#151515")
 
     tv_sb.configure(command=tv_results.yview)
-
-    v_per_page.set(20)

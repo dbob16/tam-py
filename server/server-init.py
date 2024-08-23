@@ -65,13 +65,7 @@ def main():
     cur.execute("FLUSH PRIVILEGES")
     conn.commit()
 
-    host_name = socket.gethostname()
-    ipaddr = socket.gethostbyname(host_name)
-
-    print(f"""This command completed successfully. You should be able to point to this server in the client while using your 
-    credentials specified in this run of the script. \nIf you ran this script on a separate host server, you have to specify the IP in the client config screen.
-    If you're using Linux on the server, running \"ip addr\" in a console and looking for inet can help. On Windows, \"ipconfig\" in a terminal window shows IP addresses.
-    Port 3306 or the custom port {e_port} you specified has to be open on the server's firewall.""")
+    print("This command completed successfully. You should now be able to use run_client on the client machines while pointing to the IP or hostname of this machine.")
 
 if __name__ == "__main__":
     main()
